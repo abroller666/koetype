@@ -104,7 +104,7 @@ open build/KoeType.app
 | APIエラーが出る | 通知のエラー内容、保存したキー、モデル名、ネットワーク接続を確認 |
 | 接続テストは成功するが音声入力に失敗する | 接続テストは文字起こし・整形モデルの実行までは確認しません |
 | エラー通知が表示されない | システム設定の通知でKoeTypeを許可 |
-| ビルド時に `SwiftUIMacros` のプラグインが見つからないエラーが出る | SwiftUIのマクロ（`@State` など）を使っています。マクロを使わない書き方に変えるか、Xcodeを入れてビルドしてください（下記「開発・確認」を参照） |
+| ビルド時に `SwiftUIMacros` のプラグインが見つからないエラーが出る | SwiftUIのマクロ（`@State` など）を使っています。Command Line Toolsだけでビルドする場合はマクロを使わない書き方にするか、Xcodeを入れてビルドしてください |
 
 ## ソース構成
 
@@ -123,28 +123,4 @@ Sources/KoeType/
 ├── SettingsStore.swift       # Keychain / UserDefaultsへの保存
 ├── SettingsWindow.swift      # SwiftUIの設定画面（ObservableObjectで状態を保持）
 └── Notifier.swift            # システム通知
-```
-
-## 開発・確認
-
-```bash
-swift build
-bash scripts/build-app.sh
-codesign --verify --verbose=2 build/KoeType.app
-plutil -lint Resources/Info.plist
-```
-
-macOS 27 SDKではSwiftUIの `@State` がマクロ（`SwiftUIMacros`、Xcodeにのみ同梱）に変わったため、Command Line Toolsだけではプラグインが見つからずビルドに失敗します。設定画面は `@State` を使わず `ObservableObject` で状態を保持しています。2026-10-01にApple Silicon / macOS 27.0.1 / Command Line ToolsのSwift 6.4環境で、`swift build` とリリースビルド・署名検証の成功を確認しました。録音・API連携の実機動作は未確認です。
-
-Command Line Toolsだけでビルドできる状態を保つため、SwiftUIのコードでは `@State`、`@Entry`、`@Animatable`、`@Previewable`、`#Preview` など、`SwiftUIMacros` や `PreviewsMacros` に依存するマクロを使わないでください。状態は `ObservableObject` / `@Published` / `@ObservedObject` で扱います。これらのマクロを使う場合は、Xcodeでのビルドが必須になります。
-
-通常の利用・動作確認は権限設定を含む `.app` バンドルで行います。自動テストターゲットはまだありません。手動では録音開始・停止、Escキャンセル、整形後の貼り付け、権限未許可時のコピー動作を確認してください。APIを使う動作確認には自身のキーが必要です。
-
-`.gitignore` でビルド成果物、Xcodeの個人設定、ローカル環境ファイルなどを除外しています。ソース変更は次の流れで管理できます。
-
-```bash
-git status
-git add README.md Sources Resources Package.swift scripts .gitignore
-git commit -m "Describe your change"
-git push
 ```
