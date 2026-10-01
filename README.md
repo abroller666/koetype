@@ -131,7 +131,7 @@ codesign --verify --verbose=2 build/KoeType.app
 plutil -lint Resources/Info.plist
 ```
 
-2026-10-01の確認では、Apple Silicon / Command Line ToolsのSwift 6.4環境で `SwiftUIMacros.StateMacro` のプラグインが見つからず、リリースビルドが失敗しました。この環境でのビルド成功および録音・API連携の実機動作は未確認です。
+macOS 27 SDKではSwiftUIの `@State` がマクロ（`SwiftUIMacros`、Xcodeにのみ同梱）に変わったため、Command Line Toolsだけではプラグインが見つからずビルドに失敗します。設定画面は `@State` を使わず `ObservableObject` で状態を保持しています。2026-10-01にApple Silicon / macOS 27.0.1 / Command Line ToolsのSwift 6.4環境で、`swift build` とリリースビルド・署名検証の成功を確認しました。録音・API連携の実機動作は未確認です。
 
 通常の利用・動作確認は権限設定を含む `.app` バンドルで行います。自動テストターゲットはまだありません。手動では録音開始・停止、Escキャンセル、整形後の貼り付け、権限未許可時のコピー動作を確認してください。APIを使う動作確認には自身のキーが必要です。
 
