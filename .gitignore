@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager / build outputs
+.build/
+.swiftpm/
+build/
+DerivedData/
+
+# Xcode user-specific settings
+xcuserdata/
+*.xcuserstate
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+
+# Local audio recordings
+koetype-*.wav
